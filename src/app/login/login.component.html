@@ -1,0 +1,37 @@
+<div class="login-wrapper">
+  <div class="container">
+    <h1>Login</h1>
+    <p class="subtitulo">SIGEMA APP</p>
+
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+      <input
+        id="uname"
+        type="text"
+        name="cedula"
+        placeholder="Cédula"
+        required
+        [(ngModel)]="loginData.username"
+      />
+
+      <input
+        id="pass"
+        type="password"
+        name="password"
+        placeholder="Contraseña"
+        required
+        [(ngModel)]="loginData.password"
+      />
+
+      <div class="btn-container">
+        <button
+          id="login-btn"
+          type="submit"
+          class="shift-left"
+          [disabled]="!loginForm.form.valid"
+          (mouseenter)="shiftButton($event, loginForm)">
+          Login
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://sigemabe2-c6g2gzdkcthfevfz.canadacentral-01.azurewebsites.net",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
