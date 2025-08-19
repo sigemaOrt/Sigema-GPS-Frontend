@@ -32,7 +32,7 @@
             "styles": [
               "src/styles.scss"
             ],
-            "outputPath": "dist/sigemagpsfront"
+            "outputPath": "dist/sigemagpsfront/browser"
           },
           "configurations": {
             "production": {
