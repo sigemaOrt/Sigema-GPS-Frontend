@@ -31,7 +31,8 @@
             ],
             "styles": [
               "src/styles.scss"
-            ]
+            ],
+            "outputPath": "dist/sigemagpsfront"
           },
           "configurations": {
             "production": {
