@@ -1,17 +1,29 @@
 // ==========================================
-// 🔥 VARIABLES Y CONFIGURACIÓN MODERNA
+// 🔥 VARIABLES Y CONFIGURACIÓN BLANCO Y NEGRO MODERNO
 // ==========================================
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  background: var(--primary-gradient); /* o el fondo que quieras */
+  overflow-x: hidden; /* evita scroll horizontal innecesario */
+}
+
+
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --danger-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  // Gradientes y colores adaptados a tonos de gris y transparencia
+  --primary-gradient: linear-gradient(135deg, #444444 0%, #222222 100%);
+  --success-gradient: linear-gradient(135deg, #1A701A 0%, #004000 100%); // Verde oscuro para estado de éxito
+  --danger-gradient: linear-gradient(135deg, #8C0000 0%, #660000 100%); // Rojo oscuro para estado de peligro
+  --warning-gradient: linear-gradient(135deg, #5c5c5c 0%, #333333 100%); 
   
   --card-bg: rgba(255, 255, 255, 0.95);
-  --card-hover-bg: rgba(255, 255, 255, 1);
-  --text-primary: #2d3748;
-  --text-secondary: #718096;
+  --card-hover-bg: rgba(240, 240, 240, 1);
+  --text-primary: #2d3748; // Prácticamente negro
+  --text-secondary: #718096; // Gris oscuro
   --border-light: rgba(0, 0, 0, 0.08);
   
   --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -25,7 +37,7 @@
 }
 
 // ==========================================
-// 🎨 NAVBAR MODERNO
+// 🎨 NAVBAR MODERNO GRIS
 // ==========================================
 
 .modern-navbar {
@@ -38,9 +50,10 @@
     font-size: 1.5rem;
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    color: white; // Texto blanco para contraste
     
     i {
-      color: #ffd700;
+      color: #bbbbbb; // Icono en un gris claro
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     }
   }
@@ -53,6 +66,7 @@
   font-weight: 600;
   padding: 0.5rem 1.2rem !important;
   transition: var(--transition) !important;
+  color: rgb(0, 0, 0) !important;
   
   &:hover {
     background: rgba(255, 255, 255, 0.2) !important;
@@ -63,21 +77,24 @@
 }
 
 // ==========================================
-// 📦 CONTAINER MODERNO
+// 📦 CONTAINER BLANCO Y NEGRO
 // ==========================================
 
 .modern-container {
   padding: 2rem 1rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: calc(100vh - 76px);
+  min-height: calc(100vh - 76px); /* ocupa todo el alto menos navbar */
+  width: 100%;
+  box-sizing: border-box;
 }
 
+
 // ==========================================
-// 🚨 ALERT TRABAJO ACTIVO
+// 🚨 ALERT BLANCO Y NEGRO
 // ==========================================
 
 .modern-alert-warning {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  background: linear-gradient(135deg, #eeeeee 0%, #dddddd 100%);
   border: none;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-md);
@@ -88,7 +105,7 @@
   
   .alert-icon {
     font-size: 1.5rem;
-    color: #e17055;
+    color: #444;
     margin-right: 1rem;
     animation: pulse 2s infinite;
   }
@@ -121,11 +138,14 @@
 }
 
 // ==========================================
-// 🔍 SECCIÓN DE BÚSQUEDA MODERNA
+// 🔍 SECCIÓN DE BÚSQUEDA BLANCO Y NEGRO
 // ==========================================
 
 .search-section {
   margin-bottom: 3rem;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
 }
 
 .search-container {
@@ -133,7 +153,6 @@
   gap: 1rem;
   align-items: center;
   max-width: 600px;
-  margin: 0 auto;
 }
 
 .search-input-wrapper {
@@ -161,8 +180,8 @@
     
     &:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      border-color: #777;
+      box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
       transform: translateY(-2px);
     }
     
@@ -198,7 +217,7 @@
 }
 
 // ==========================================
-// ⏳ LOADING MODERNO
+// ⏳ LOADING BLANCO Y NEGRO
 // ==========================================
 
 .loading-container {
@@ -217,7 +236,7 @@
   .spinner-ring {
     position: absolute;
     border: 3px solid transparent;
-    border-top: 3px solid #667eea;
+    border-top: 3px solid #666;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     
@@ -232,7 +251,7 @@
       height: 45px;
       top: 7.5px;
       left: 7.5px;
-      border-top-color: #764ba2;
+      border-top-color: #444;
       animation-delay: -0.3s;
     }
     
@@ -241,7 +260,7 @@
       height: 30px;
       top: 15px;
       left: 15px;
-      border-top-color: #4facfe;
+      border-top-color: #222;
       animation-delay: -0.6s;
     }
   }
@@ -265,7 +284,7 @@
 }
 
 // ==========================================
-// 💳 CARDS SÚPER FACHERAS
+// 💳 CARDS CON BRILLO GRIS
 // ==========================================
 
 .equipment-card {
@@ -295,14 +314,14 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #dddddd 0%, #aaaaaa 100%);
   opacity: 0;
   transition: var(--transition);
   
   &.active-glow {
-    background: var(--success-gradient);
+    background: linear-gradient(135deg, #666666 0%, #333333 100%);
     opacity: 1;
-    box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -411,12 +430,12 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.8rem 1rem;
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   margin-bottom: 1.5rem;
   
   .location-icon {
-    color: #667eea;
+    color: #444;
     font-size: 1.1rem;
   }
   
@@ -539,22 +558,22 @@
   &.btn-success {
     background: var(--success-gradient);
     color: white;
-    box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+    box-shadow: 0 8px 25px rgba(26, 112, 26, 0.3);
     
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+      box-shadow: 0 15px 35px rgba(26, 112, 26, 0.4);
     }
   }
   
   &.btn-danger {
     background: var(--danger-gradient);
     color: white;
-    box-shadow: 0 8px 25px rgba(250, 112, 154, 0.3);
+    box-shadow: 0 8px 25px rgba(140, 0, 0, 0.3);
     
     &:hover {
       transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(250, 112, 154, 0.4);
+      box-shadow: 0 15px 35px rgba(140, 0, 0, 0.4);
     }
   }
   
@@ -741,6 +760,7 @@
 // 🎨 ESTADOS DE COLOR PERSONALIZADOS
 // ==========================================
 
+// Se mantienen los colores originales de los estados para la semántica, pero se puede adaptar a grises si se desea un blanco y negro estricto.
 .verde { color: #28a745; font-weight: bold; }
 .amarillo { color: #ffc107; font-weight: bold; }
 .rojo { color: #dc3545; font-weight: bold; }
@@ -764,9 +784,9 @@
   bottom: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 50%,
-    rgba(255, 255, 255, 0.1) 100%
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.05) 50%,
+    rgba(0, 0, 0, 0.1) 100%
   );
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -833,7 +853,7 @@
   border-radius: 4px;
   
   &:hover {
-    background: linear-gradient(135deg, #5a6fd8 0%, #6b5b95 100%);
+    background: linear-gradient(135deg, #5a5a5a 0%, #333333 100%);
   }
 }
 
@@ -881,7 +901,7 @@
 
 // Accesibilidad mejorada
 .equipment-card:focus-within {
-  outline: 3px solid rgba(102, 126, 234, 0.5);
+  outline: 3px solid rgba(0, 0, 0, 0.5);
   outline-offset: 2px;
 }
 
@@ -909,7 +929,7 @@
 // Efecto de brillo en hover para iconos
 .equipment-icon:hover,
 .search-icon:hover {
-  filter: brightness(1.2) drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
   transition: filter 0.3s ease;
 }
 

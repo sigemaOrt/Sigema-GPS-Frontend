@@ -42,7 +42,7 @@ onSubmit(form: NgForm) {
         localStorage.setItem('token', res.token);
         localStorage.setItem('rol', res.rol);
 
-        this.router.navigate(['/home']); // 🔹 Navegación aquí
+        this.router.navigate(['/home']); 
       },
       error: err => {
         this.mostrarMensaje('Credenciales inválidas o acceso denegado', 'error');
