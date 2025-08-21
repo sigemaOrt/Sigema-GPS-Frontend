@@ -1,36 +1,38 @@
-<div class="login-wrapper">
-  <div class="login-box">
-    <h1>Login</h1>
-    <p class="subtitulo">SIGEMA APP</p>
-
-    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
-      <input
-        id="uname"
-        type="text"
-        name="cedula"
-        placeholder="Cédula"
-        required
-        [(ngModel)]="loginData.username"
-      />
-
-      <input
-        id="pass"
-        type="password"
-        name="password"
-        placeholder="Contraseña"
-        required
-        [(ngModel)]="loginData.password"
-      />
-
-<div class="btn-container">
-  <button
-    id="login-btn"
-    type="submit"
-    [disabled]="!loginForm.form.valid">
-    Login
-  </button>
-</div>
-
-    </form>
+<div class="fondo">
+  @if(isLoading){
+  <div class="form text-center">
+    <p><strong> Cargando... </strong></p>
+    <div class="spinner-border text-dark" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
   </div>
+  } @if(!isLoading){
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+    <h3>Login</h3>
+
+    <label for="username">Cédula</label>
+    <input
+      type="text"
+      placeholder="Cédula"
+      id="username"
+      name="username"
+      [(ngModel)]="loginData.username"
+      required
+      #username="ngModel"
+    />
+
+    <label for="password">Contraseña</label>
+    <input
+      type="password"
+      placeholder="Contraseña"
+      id="password"
+      name="password"
+      [(ngModel)]="loginData.password"
+      required
+      #password="ngModel"
+    />
+
+    <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
+  </form>
+  }
 </div>

@@ -14,7 +14,6 @@ export class TrabajoService {
 
   private equipoEnTrabajoId: number | null = null;
 
-  // Inyecta HttpClient en el constructor
   constructor(private http: HttpClient) {
     this.verificarTrabajoActivo();
   }

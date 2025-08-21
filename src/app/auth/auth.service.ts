@@ -22,21 +22,17 @@ export class AuthService implements OnDestroy {
     private router: Router,
     private ngZone: NgZone
   ) { 
-    // Observables de actividad
     this.setupActivityEvents();
   }
 
-  /** LOGIN */
   login(loginData: Login): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginData);
   }
 
-  /** TOKEN */
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  /** LOGOUT */
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('rol');
@@ -48,7 +44,6 @@ export class AuthService implements OnDestroy {
     this.ngZone.run(() => this.router.navigate(['/login']));
   }
 
-  /** INACTIVITY */
   private startInactivityTimer(): void {
     if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
     this.inactivityTimeout = setTimeout(() => this.logout(), this.INACTIVITY_TIME_MS);

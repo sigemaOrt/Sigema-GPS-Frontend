@@ -1,54 +1,71 @@
 <!-- Header con gradiente moderno -->
-<nav class="navbar navbar-expand-lg navbar-dark modern-navbar">
-  <div class="container-fluid">
+<div
+  class="row justify-content-evenly align-items-center py-2"
+  style="background-color: rgb(27, 27, 27); color: white"
+>
+  <div class="col-5">
     <span class="navbar-brand fw-bold">
-      <i class="bi bi-gear-fill me-2"></i>
+      <i class="bi bi-gear-fill"></i>
       Sigema APP
     </span>
-    <button class="btn btn-outline-light modern-btn-outline ms-auto" (click)="logout()">
+  </div>
+
+  <div class="col-5 text-end">
+    <button
+      class="btn btn-outline-light modern-btn-outline ms-auto"
+      (click)="logout()"
+    >
       <i class="bi bi-box-arrow-right me-1"></i>
       Salir
     </button>
   </div>
-</nav>
+</div>
 
-<div class="container-fluid modern-container">
-  
+<div class="row justify-content-center">
   <!-- Trabajo Activo - Mejorado -->
-  <div *ngIf="hayTrabajoActivo" class="alert modern-alert-warning">
+  @if(hayTrabajoActivo){
+  <div class="col-10 alert modern-alert-warning mt-3">
     <div class="alert-icon">
       <i class="bi bi-exclamation-triangle-fill"></i>
     </div>
     <div class="alert-content">
       <div class="alert-title">Trabajo en Progreso</div>
-      <div class="alert-text">Equipo ID: {{ equipoEnTrabajoId }} actualmente en uso</div>
+      <div class="alert-text">
+        Equipo ID: {{ equipoEnTrabajoId }} actualmente en uso
+      </div>
     </div>
     <div class="alert-pulse"></div>
   </div>
+  }
 
   <!-- Buscador moderno -->
-  <div class="search-section">
-    <div class="search-container">
-      <div class="search-input-wrapper">
+  <div class="col-10 search-section mt-3">
+    <div class="search-container w-100">
+      <div class="search-input-wrapper w-100">
         <i class="bi bi-search search-icon"></i>
-        <input 
-          type="text" 
-          class="modern-search-input" 
-          [(ngModel)]="filtroMatricula" 
-          placeholder="Buscar por matrícula...">
+        <input
+          type="text"
+          class="modern-search-input"
+          [(ngModel)]="filtroMatricula"
+          placeholder="Buscar por matrícula..."
+        />
         <div class="search-underline"></div>
       </div>
-<button 
-  class="modern-refresh-btn"
-  (click)="cargarEquipos()"
-  [disabled]="estaActualizando">
-  <i class="bi" [ngClass]="estaActualizando ? 'bi-arrow-clockwise spin' : 'bi-arrow-clockwise'"></i>
-</button>
-
+      <button
+        class="btn btn-outline-light w-100"
+        (click)="cargarEquipos()"
+        [disabled]="estaActualizando"
+      >
+        <i
+          class="bi"
+          [ngClass]="estaActualizando ? 'bi-arrow-clockwise spin' : 'bi-arrow-clockwise'"
+        ></i>
+      </button>
     </div>
   </div>
-  <!-- Spinner de actualización moderno -->
-  <div *ngIf="estaActualizando" class="loading-container">
+
+  @if(estaActualizando){
+  <div class="col-10 loading-container">
     <div class="modern-spinner">
       <div class="spinner-ring"></div>
       <div class="spinner-ring"></div>
@@ -56,13 +73,16 @@
     </div>
     <span class="loading-text">Actualizando equipos...</span>
   </div>
-
+  }
   <!-- Grid de equipos moderno -->
-  <div class="equipment-grid">
-    <div *ngFor="let equipo of equipos | filtroPorMatricula:filtroMatricula" 
-         class="equipment-card">
-      <ng-container *ngIf="equipo.modeloEquipo && equipo.modeloEquipo.marca && equipo.modeloEquipo.tipoEquipo">
-        
+  <div class="col-10 equipment-grid">
+    <div
+      *ngFor="let equipo of equipos | filtroPorMatricula:filtroMatricula"
+      class="equipment-card w-100 mx-0"
+    >
+      <ng-container
+        *ngIf="equipo.modeloEquipo && equipo.modeloEquipo.marca && equipo.modeloEquipo.tipoEquipo"
+      >
         <!-- Header de la card -->
         <div class="card-header-modern">
           <div class="equipment-icon">
@@ -79,7 +99,6 @@
 
         <!-- Contenido de la card -->
         <div class="card-content-modern">
-          
           <!-- Info grid -->
           <div class="info-grid">
             <div class="info-item">
@@ -88,15 +107,22 @@
             </div>
             <div class="info-item">
               <div class="info-label">Capacidad</div>
-              <div class="info-value">{{ equipo.modeloEquipo.capacidad }} {{ equipo.modeloEquipo.unidadMedida }}</div>
+              <div class="info-value">
+                {{ equipo.modeloEquipo.capacidad }} {{
+                equipo.modeloEquipo.unidadMedida }}
+              </div>
             </div>
             <div class="info-item">
               <div class="info-label">Marca</div>
-              <div class="info-value">{{ equipo.modeloEquipo.marca.nombre }}</div>
+              <div class="info-value">
+                {{ equipo.modeloEquipo.marca.nombre }}
+              </div>
             </div>
             <div class="info-item">
               <div class="info-label">Tipo</div>
-              <div class="info-value">{{ equipo.modeloEquipo.tipoEquipo.nombre }}</div>
+              <div class="info-value">
+                {{ equipo.modeloEquipo.tipoEquipo.nombre }}
+              </div>
             </div>
           </div>
 
@@ -107,51 +133,67 @@
           </div>
 
           <!-- Status chips modernos -->
-          <div class="status-chips">
-            <div class="status-chip success" *ngIf="equipo.estaEnUso">
-              <i class="bi bi-check-circle-fill"></i>
-              <span>En Uso</span>
-              <div class="chip-glow success-glow"></div>
-            </div>
-            <div class="status-chip secondary" *ngIf="!equipo.estaEnUso">
-              <i class="bi bi-circle"></i>
-              <span>Disponible</span>
-            </div>
-            <div class="status-chip danger" *ngIf="isBotonDeshabilitado(equipo) && !equipo.estaEnUso">
-              <i class="bi bi-lock-fill"></i>
-              <span>Bloqueado</span>
+          <div class="row mb-2">
+            <div class="col-12">
+              <div
+                class="btn btn-outline-success disabled w-100"
+                *ngIf="equipo.estaEnUso"
+              >
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span>En Uso</span>
+                <div class="chip-glow success-glow"></div>
+              </div>
+              <div
+                class="btn btn-outline-light disabled w-100"
+                *ngIf="!equipo.estaEnUso"
+              >
+                <i class="bi bi-circle me-2"></i>
+                <span>Disponible</span>
+              </div>
+              <div
+                class="btn btn-outline-danger disabled w-100"
+                *ngIf="isBotonDeshabilitado(equipo) && !equipo.estaEnUso"
+              >
+                <i class="bi bi-lock-fill me-2"></i>
+                <span>Bloqueado</span>
+              </div>
             </div>
           </div>
 
           <!-- Botón de acción moderno -->
-          <button 
-            class="modern-action-btn"
+          <button
+            class="btn w-100"
             [ngClass]="{
-              'btn-danger': equipo.estaEnUso,
-              'btn-success': !equipo.estaEnUso && !isBotonDeshabilitado(equipo),
+              'btn-outline-danger': equipo.estaEnUso,
+              'btn-outline-success': !equipo.estaEnUso && !isBotonDeshabilitado(equipo),
               'btn-disabled': isBotonDeshabilitado(equipo)
             }"
             [disabled]="isBotonDeshabilitado(equipo)"
-            (click)="toggleEstado(equipo.id, equipo.estaEnUso ?? false)">
-            
+            (click)="toggleEstado(equipo.id, equipo.estaEnUso ?? false)"
+          >
             <div class="btn-content">
-              <i class="bi" 
-                 [ngClass]="equipo.estaEnUso ? 'bi-stop-circle-fill' : 'bi-play-circle-fill'"></i>
+              <i
+                class="bi me-2"
+                [ngClass]="equipo.estaEnUso ? 'bi-stop-circle-fill' : 'bi-play-circle-fill'"
+              ></i>
               <span>{{ getTextoBoton(equipo) }}</span>
             </div>
             <div class="btn-ripple"></div>
           </button>
-
         </div>
 
         <!-- Card glow effect -->
-        <div class="card-glow" [ngClass]="{'active-glow': equipo.estaEnUso}"></div>
+        <div
+          class="card-glow"
+          [ngClass]="{'active-glow': equipo.estaEnUso}"
+        ></div>
       </ng-container>
     </div>
   </div>
 
+  @if(equipos.length === 0 && !estaActualizando){
   <!-- Sin equipos - Mejorado -->
-  <div *ngIf="equipos.length === 0 && !estaActualizando" class="no-equipment">
+  <div class="no-equipment">
     <div class="no-equipment-icon">
       <i class="bi bi-inbox"></i>
     </div>
@@ -160,5 +202,5 @@
       <p>Intenta recargar o verifica tu conexión</p>
     </div>
   </div>
-
+  }
 </div>

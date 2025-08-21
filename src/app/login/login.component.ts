@@ -19,42 +19,42 @@ export class LoginComponent {
   errorMessage: string = '';
   positions = ['shift-left', 'shift-top', 'shift-right', 'shift-bottom'];
   currentPosIndex = 0;
+  isLoading: boolean = false;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  // 🔹 Mostrar mensaje con SweetAlert2
-  async mostrarMensaje(mensaje: string, icon: 'success' | 'error' | 'warning' | 'info' = 'info') {
+  async mostrarMensaje(
+    mensaje: string,
+    icon: 'success' | 'error' | 'warning' | 'info' = 'info'
+  ) {
     await Swal.fire({
       text: mensaje,
       icon: icon,
       confirmButtonText: 'OK',
-      confirmButtonColor: '#3085d6'
+      confirmButtonColor: '#3085d6',
     });
   }
 
-onSubmit(form: NgForm) {
-  if (form.valid) {
-    this.authService.login(this.loginData).subscribe({
-      next: res => {
-        localStorage.setItem('token', res.token);
-        localStorage.setItem('rol', res.rol);
+  onSubmit(form: NgForm) {
+    if (form.valid) {
+      this.authService.login(this.loginData).subscribe({
+        next: (res) => {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('rol', res.rol);
 
-        this.router.navigate(['/home']); 
-      },
-      error: err => {
-        this.mostrarMensaje('Credenciales inválidas o acceso denegado', 'error');
-      }
-    });
-  } else {
-    this.mostrarMensaje('Formulario inválido', 'warning');
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.mostrarMensaje(
+            'Credenciales inválidas o acceso denegado',
+            'error'
+          );
+        },
+      });
+    } else {
+      this.mostrarMensaje('Formulario inválido', 'warning');
+    }
   }
-}
-
-
-
 
   shiftButton(event: Event, form: NgForm) {
     if (form.valid) return;

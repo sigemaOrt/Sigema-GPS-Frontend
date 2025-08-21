@@ -60,13 +60,9 @@ html, body {
 }
 
 .modern-btn-outline {
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
-  backdrop-filter: blur(10px);
-  border-radius: 12px !important;
   font-weight: 600;
   padding: 0.5rem 1.2rem !important;
   transition: var(--transition) !important;
-  color: rgb(0, 0, 0) !important;
   
   &:hover {
     background: rgba(255, 255, 255, 0.2) !important;
