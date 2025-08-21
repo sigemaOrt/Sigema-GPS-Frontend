@@ -14,27 +14,7 @@ export class TrabajoService {
 
   private equipoEnTrabajoId: number | null = null;
 
-  constructor(private http: HttpClient) {
-    this.verificarTrabajoActivo();
-  }
-
-  private verificarTrabajoActivo(): void {
-    this.http.get<{ activo: boolean, equipoId: number }>(`${this.appsigemagpsUrl}/trabajoActivo`)
-      .pipe(
-        map(data => {
-          if (data?.activo) {
-            this.trabajoActivoSubject.next(true);
-            this.equipoEnTrabajoId = data.equipoId;
-          }
-          return data;
-        }),
-        catchError(err => {
-          console.error('Error verificando trabajo activo', err);
-          return of(null);
-        })
-      )
-      .subscribe();
-  }
+  constructor(private http: HttpClient) {} 
 
   hayTrabajoActivo(): boolean {
     return this.trabajoActivoSubject.value;
