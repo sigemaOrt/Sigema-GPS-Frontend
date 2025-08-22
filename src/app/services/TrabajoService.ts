@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http'; // <-- Importa HttpClient
 import { map, catchError } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
+import { PosicionClienteDTO } from '../models/posicionClienteDTO';
 
 @Injectable({
   providedIn: 'root',
@@ -62,12 +63,15 @@ export class TrabajoService {
     lon: number,
     em: string[]
   ): Observable<any> {
-    const body = { latitud: lat, longitud: lon, emails: em ?? [] };
+    const posicionClienteDTO = new PosicionClienteDTO();
+    posicionClienteDTO.latitud = lat;
+    posicionClienteDTO.longitud = lon;
+    posicionClienteDTO.emails = em ?? [];
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
     return this.http
-      .post<any>(`${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`, body, {
+      .post<any>(`${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`, posicionClienteDTO, {
         headers,
       })
       .pipe(
