@@ -61,12 +61,12 @@ export class TrabajoService {
     idEquipo: number,
     lat: number,
     lon: number,
-    em: string[]
+    em: { id: number; email: string }[]
   ): Observable<any> {
     const posicionClienteDTO = new PosicionClienteDTO();
     posicionClienteDTO.latitud = lat;
     posicionClienteDTO.longitud = lon;
-    posicionClienteDTO.emails = em && em.length > 0 ? em : []
+    posicionClienteDTO.emails = em ? em.map(e => e.email) : []
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });

@@ -27,6 +27,6 @@ export class Equipo {
     nombre: string;
     latitud: number;
     longitud: number;
-    emails: string[];
+    emails: { id: number; email: string }[];
   };
 }
