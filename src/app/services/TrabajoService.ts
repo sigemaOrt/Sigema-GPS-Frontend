@@ -66,7 +66,7 @@ export class TrabajoService {
     const posicionClienteDTO = new PosicionClienteDTO();
     posicionClienteDTO.latitud = lat;
     posicionClienteDTO.longitud = lon;
-    posicionClienteDTO.emails = em ?? [];
+    posicionClienteDTO.emails = em && em.length > 0 ? em : []
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
