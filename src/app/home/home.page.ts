@@ -59,22 +59,5 @@ export class TrabajoService {
     return this.http.get<boolean>(`${this.appsigemagpsUrl}/${idEquipo}/enUso`);
   }
 
-  // 🔹 ahora este es el método que reemplaza "trabajoActivo"
-  puedeIniciarTrabajo(idEquipo: number): Observable<boolean> {
-    return this.http.get<boolean>(`${this.appsigemagpsUrl}/puedeIniciarTrabajo/${idEquipo}`)
-      .pipe(
-        map(puede => {
-          if (!puede) {
-            // si NO puede iniciar, entonces significa que hay uno en curso
-            this.trabajoActivoSubject.next(true);
-            this.equipoEnTrabajoId = idEquipo;
-          }
-          return puede;
-        }),
-        catchError(err => {
-          console.error('Error verificando si puede iniciar trabajo', err);
-          return of(false);
-        })
-      );
-  }
+
 }
