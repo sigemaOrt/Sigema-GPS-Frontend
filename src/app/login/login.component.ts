@@ -46,6 +46,7 @@ export class LoginComponent {
           this.router.navigate(['/home']);
         },
         error: (err) => {
+          this.isLoading = false;
           this.mostrarMensaje(
             'Credenciales inválidas o acceso denegado',
             'error'
@@ -53,10 +54,11 @@ export class LoginComponent {
         },
       });
     } else {
+      this.isLoading = false;
       this.mostrarMensaje('Formulario inválido', 'warning');
     }
 
-    this.isLoading = false;
+
   }
 
   shiftButton(event: Event, form: NgForm) {

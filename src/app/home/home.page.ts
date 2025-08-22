@@ -229,6 +229,5 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   logout() {
     this.authService.logout();
-    this.mostrarMensaje('Sesión cerrada exitosamente.', 'success');
   }
 }

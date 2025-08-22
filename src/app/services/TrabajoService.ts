@@ -70,7 +70,6 @@ export class TrabajoService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
-    console.log(JSON.stringify(posicionClienteDTO))
     return this.http
       .post<any>(`${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`, posicionClienteDTO, {
         headers,
