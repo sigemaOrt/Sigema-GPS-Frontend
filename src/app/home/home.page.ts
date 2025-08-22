@@ -193,8 +193,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                 'success'
               );
             },
-            error: () =>
-              this.mostrarMensaje('Error al finalizar el trabajo.', 'error'),
+            error: (error) =>
+              this.mostrarMensaje('Error al finalizar el trabajo. ' + error.error, 'error'),
           });
       },
       (err) => this.manejarErrorGeolocation(err, 'finalizar')
