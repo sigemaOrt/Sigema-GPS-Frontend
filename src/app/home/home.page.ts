@@ -182,7 +182,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         const equipo = this.equipos.find((e) => e.id === equipoId);
-        console.log(lat, lon);
+        
         this.trabajoService
           .finalizarTrabajo(equipoId, lat, lon, equipo?.unidad?.emails ?? [])
           .subscribe({
