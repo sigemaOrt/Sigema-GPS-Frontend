@@ -62,7 +62,7 @@ export class TrabajoService {
     lon: number,
     em: string[]
   ): Observable<any> {
-    const body = { latitud: lat, longitud: lon, emails: em };
+    const body = { latitud: lat, longitud: lon, emails: em ?? [] };
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
