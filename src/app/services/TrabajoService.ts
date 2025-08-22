@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
-import { HttpClient } from '@angular/common/http'; // <-- Importa HttpClient
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // <-- Importa HttpClient
 import { map, catchError } from 'rxjs/operators';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class TrabajoService {
   private appsigemagpsUrl =
     'https://sigemabe2-c6g2gzdkcthfevfz.canadacentral-01.azurewebsites.net/api/posiciones';
@@ -16,8 +16,10 @@ export class TrabajoService {
 
   private equipoEnTrabajoId: number | null = null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
+  private obtenerToken(): string | null {
+    return this.authService.getToken();
   }
 
   hayTrabajoActivo(): boolean {
@@ -38,8 +40,13 @@ export class TrabajoService {
     }
 
     const body = { latitud: lat, longitud: lon };
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
     return this.http
-      .post<any>(`${this.appsigemagpsUrl}/iniciarTrabajo/${idEquipo}`, body)
+      .post<any>(`${this.appsigemagpsUrl}/iniciarTrabajo/${idEquipo}`, body, {
+        headers,
+      })
       .pipe(
         map((res) => {
           this.trabajoActivoSubject.next(true);
@@ -56,8 +63,13 @@ export class TrabajoService {
     em: string[]
   ): Observable<any> {
     const body = { latitud: lat, longitud: lon, email: em };
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
     return this.http
-      .post<any>(`${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`, body)
+      .post<any>(`${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`, body, {
+        headers,
+      })
       .pipe(
         map((res) => {
           this.trabajoActivoSubject.next(false);
@@ -68,6 +80,11 @@ export class TrabajoService {
   }
 
   getEstaEnUso(idEquipo: number): Observable<boolean> {
-    return this.http.get<boolean>(`${this.appsigemagpsUrl}/${idEquipo}/enUso`);
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http.get<boolean>(`${this.appsigemagpsUrl}/${idEquipo}/enUso`, {
+      headers,
+    });
   }
 }

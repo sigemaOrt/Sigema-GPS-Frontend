@@ -37,11 +37,12 @@ export class LoginComponent {
 
   onSubmit(form: NgForm) {
     if (form.valid) {
+      this.isLoading = true;
       this.authService.login(this.loginData).subscribe({
         next: (res) => {
           localStorage.setItem('token', res.token);
           localStorage.setItem('rol', res.rol);
-
+          this.isLoading = false;
           this.router.navigate(['/home']);
         },
         error: (err) => {
@@ -54,6 +55,8 @@ export class LoginComponent {
     } else {
       this.mostrarMensaje('Formulario inválido', 'warning');
     }
+
+    this.isLoading = false;
   }
 
   shiftButton(event: Event, form: NgForm) {
