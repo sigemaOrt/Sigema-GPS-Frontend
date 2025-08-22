@@ -6,6 +6,7 @@ import { map, catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
+
 export class TrabajoService {
   private appsigemagpsUrl =
     'https://sigemabe2-c6g2gzdkcthfevfz.canadacentral-01.azurewebsites.net/api/posiciones';
