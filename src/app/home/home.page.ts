@@ -51,26 +51,46 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  cargarEquipos() {
-    this.estaActualizando = true;
-    this.equipoService
-      .obtenerEquipos()
-      .pipe(finalize(() => (this.estaActualizando = false)))
-      .subscribe({
-        next: (data: Equipo[]) => {
-          this.equipos = data;
-          this.cargarEstadoUsoEquipos();
-          this.mostrarMensaje('Equipos actualizados correctamente', 'success');
-        },
+cargarEquipos() {
+  this.estaActualizando = true;
+  this.equipoService
+    .obtenerEquipos()
+    .pipe(finalize(() => (this.estaActualizando = false)))
+    .subscribe({
+      next: (equipos: Equipo[]) => {
+        if (equipos.length === 0) {
+          this.equipos = [];
+          return;
+        }
 
-        error: () => {
-          this.mostrarMensaje(
-            'Error al cargar los equipos. Intente de nuevo más tarde.',
-            'error'
-          );
-        },
-      });
-  }
+        
+        if (this.trabajoService.hayTrabajoActivo()) {
+          const equipoId = this.trabajoService.getEquipoEnTrabajo();
+          this.equipos = equipos.filter((e) => e.id === equipoId);
+          this.mostrarMensaje('Equipos actualizados (trabajo activo)', 'info');
+          return;
+        }
+
+       
+        const checks = equipos.map((equipo) =>
+          this.trabajoService.getEstaEnUso(equipo.id).pipe(
+            catchError(() => of(true)) 
+          )
+        );
+
+        forkJoin(checks).subscribe((estados: boolean[]) => {
+          this.equipos = equipos.filter((_, i) => !estados[i]); 
+          this.mostrarMensaje('Equipos disponibles actualizados', 'success');
+        });
+      },
+      error: () => {
+        this.mostrarMensaje(
+          'Error al cargar los equipos. Intente de nuevo más tarde.',
+          'error'
+        );
+      },
+    });
+}
 
   actualizarEquipos() {
     this.estaActualizando = true;
