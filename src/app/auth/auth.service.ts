@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Observable, fromEvent, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Login } from '../models/Login';
+import { TrabajoService } from '../services/TrabajoService';
 
 interface LoginResponse {
   token: string;
@@ -33,16 +34,44 @@ export class AuthService implements OnDestroy {
     return localStorage.getItem('token');
   }
 
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    if (this.inactivityTimeout) {
-      clearTimeout(this.inactivityTimeout);
-      this.inactivityTimeout = null;
+logout(): void {
+  // Si hay un trabajo activo, finalizarlo primero
+  const trabajoService = (window as any)['trabajoService'] as TrabajoService | undefined;
+  if (trabajoService?.hayTrabajoActivo()) {
+    const equipoId = trabajoService.getEquipoEnTrabajo();
+    if (equipoId != null) {
+      // Obtenemos la ubicación actual antes de finalizar (opcional)
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          trabajoService.finalizarTrabajo(
+            equipoId,
+            pos.coords.latitude,
+            pos.coords.longitude,
+            [] // o pasar los emails si los tenés
+          ).subscribe({
+            next: () => console.log('Trabajo finalizado antes de logout'),
+            error: () => console.log('Error al finalizar trabajo antes de logout')
+          });
+        },
+        () => {
+          // Si no hay ubicación, igual intentamos finalizar sin coords
+          trabajoService.finalizarTrabajo(equipoId, 0, 0, []).subscribe();
+        }
+      );
     }
-    this.teardownActivityMonitoring();
-    this.ngZone.run(() => this.router.navigate(['/login']));
   }
+
+  // Limpiamos token y timer
+  localStorage.removeItem('token');
+  localStorage.removeItem('rol');
+  if (this.inactivityTimeout) {
+    clearTimeout(this.inactivityTimeout);
+    this.inactivityTimeout = null;
+  }
+  this.teardownActivityMonitoring();
+  this.ngZone.run(() => this.router.navigate(['/login']));
+}
+
 
   private startInactivityTimer(): void {
     if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);

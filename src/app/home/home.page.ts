@@ -33,10 +33,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
-    this.cargarEquipos();
-    this.suscribirseAEstadoTrabajo();
-  }
+ngOnInit() {
+  (window as any)['trabajoService'] = this.trabajoService;
+  this.cargarEquipos();
+  this.suscribirseAEstadoTrabajo();
+}
+
+
 
   ngOnDestroy() {
     this.trabajoSubscription?.unsubscribe();
