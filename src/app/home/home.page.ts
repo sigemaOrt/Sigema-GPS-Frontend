@@ -204,31 +204,33 @@ next: () => {
     );
   }
 
-  private finalizarTrabajo(equipoId: number) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        const equipo = this.equipos.find((e) => e.id === equipoId);
-        
-        this.trabajoService
-          .finalizarTrabajo(equipoId, lat, lon, equipo?.unidad?.emails ?? [])
-          .subscribe({
-            next: () => {
-              if (equipo) equipo.estaEnUso = false;
+private finalizarTrabajo(equipoId: number) {
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const equipo = this.equipos.find((e) => e.id === equipoId);
+      
+      this.trabajoService
+        .finalizarTrabajo(equipoId, lat, lon, equipo?.unidad?.emails ?? [])
+        .subscribe({
+          next: () => {
+            if (equipo) equipo.estaEnUso = false;
 
-              this.mostrarMensaje(
-                'Trabajo finalizado exitosamente.',
-                'success'
-              );
-            },
-            error: (error) =>
-              this.mostrarMensaje('Error al finalizar el trabajo. ' + error.error, 'error'),
-          });
-      },
-      (err) => this.manejarErrorGeolocation(err, 'finalizar')
-    );
-  }
+            this.mostrarMensaje('Trabajo finalizado exitosamente.', 'success');
+            this.cargarEquipos();
+          },
+          error: (error) =>
+            this.mostrarMensaje(
+              'Error al finalizar el trabajo. ' + error.error,
+              'error'
+            ),
+        });
+    },
+    (err) => this.manejarErrorGeolocation(err, 'finalizar')
+  );
+}
+
 
   private manejarErrorGeolocation(
     error: GeolocationPositionError,
