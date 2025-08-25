@@ -182,12 +182,17 @@ cargarEquipos() {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         this.trabajoService.iniciarTrabajo(equipoId, lat, lon).subscribe({
-          next: () => {
-            const equipo = this.equipos.find((e) => e.id === equipoId);
-            if (equipo) equipo.estaEnUso = true;
-            this.equipoEnTrabajoId = this.trabajoService.getEquipoEnTrabajo();
-            this.mostrarMensaje('Trabajo iniciado exitosamente.', 'success');
-          },
+next: () => {
+  const equipo = this.equipos.find((e) => e.id === equipoId);
+  if (equipo) {
+    equipo.estaEnUso = true;
+    this.equipos = [equipo]; 
+  }
+  this.equipoEnTrabajoId = this.trabajoService.getEquipoEnTrabajo();
+  this.hayTrabajoActivo = true;
+  this.mostrarMensaje('Trabajo iniciado exitosamente.', 'success');
+},
+
           error: () =>
             this.mostrarMensaje('Error al iniciar el trabajo.', 'error'),
         });
