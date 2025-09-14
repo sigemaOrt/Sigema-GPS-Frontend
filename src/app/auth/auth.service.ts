@@ -14,8 +14,7 @@ interface LoginResponse {
 export class AuthService implements OnDestroy {
   private apiUrl = 'https://sigemabe-d0gke3fdbnfza9et.canadacentral-01.azurewebsites.net/api';
   private inactivityTimeout: any;
-  private readonly INACTIVITY_TIME_MS = 30 * 60 * 1000;
-
+  private readonly INACTIVITY_TIME_MS = 7 * 24 * 60 * 60 * 1000;
   private activitySubscription: Subscription | undefined;
 
   constructor(
