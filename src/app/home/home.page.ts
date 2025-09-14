@@ -58,11 +58,12 @@ cargarEquipos() {
   this.estaActualizando = true;
   this.equipoService
     .obtenerEquipos()
-    .pipe(finalize(() => (this.estaActualizando = false)))
+    .pipe()
     .subscribe({
       next: (equipos: Equipo[]) => {
         if (equipos.length === 0) {
           this.equipos = [];
+          this.estaActualizando=false;
           return;
         }
 
@@ -70,6 +71,7 @@ cargarEquipos() {
         if (this.trabajoService.hayTrabajoActivo()) {
           const equipoId = this.trabajoService.getEquipoEnTrabajo();
           this.equipos = equipos.filter((e) => e.id === equipoId);
+          this.estaActualizando=false;
           this.mostrarMensaje('Equipos actualizados (trabajo activo)', 'info');
           return;
         }
@@ -85,8 +87,10 @@ cargarEquipos() {
           this.equipos = equipos.filter((_, i) => !estados[i]); 
           this.mostrarMensaje('Equipos disponibles actualizados', 'success');
         });
+        this.estaActualizando=false;
       },
       error: () => {
+        this.estaActualizando=false;
         this.mostrarMensaje(
           'Error al cargar los equipos. Intente de nuevo más tarde.',
           'error'
@@ -99,15 +103,17 @@ cargarEquipos() {
     this.estaActualizando = true;
     this.equipoService
       .obtenerEquipos()
-      .pipe(finalize(() => (this.estaActualizando = false)))
+      .pipe()
       .subscribe({
         next: (data: Equipo[]) => {
           this.equipos = data;
           this.cargarEstadoUsoEquipos();
+        this.estaActualizando=false;
           this.mostrarMensaje('Equipos actualizados correctamente', 'success');
         },
         error: () => {
-          this.mostrarMensaje('Error al actualizar los equipos.', 'error');
+        this.estaActualizando=false;
+        this.mostrarMensaje('Error al actualizar los equipos.', 'error');
         },
       });
   }
@@ -115,10 +121,8 @@ cargarEquipos() {
   actualizacionRapida() {
     if (this.estaActualizando) {
       this.mostrarMensaje('Ya se está actualizando...', 'info');
-
       return;
     }
-
     this.cargarEquipos();
   }
 
@@ -185,7 +189,7 @@ cargarEquipos() {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         this.trabajoService.iniciarTrabajo(equipoId, lat, lon).subscribe({
-next: () => {
+  next: () => {
   const equipo = this.equipos.find((e) => e.id === equipoId);
   if (equipo) {
     equipo.estaEnUso = true;

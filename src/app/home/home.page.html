@@ -1,4 +1,3 @@
-<!-- Header con gradiente moderno -->
 <div
   class="row justify-content-evenly align-items-center py-2"
   style="background-color: rgb(27, 27, 27); color: white"
@@ -22,7 +21,6 @@
 </div>
 
 <div class="row justify-content-center">
-  <!-- Trabajo Activo - Mejorado -->
   @if(hayTrabajoActivo){
   <div class="col-10 alert modern-alert-warning mt-3">
     <div class="alert-icon">
@@ -38,7 +36,6 @@
   </div>
   }
 
-  <!-- Buscador moderno -->
   <div class="col-10 search-section mt-3">
     <div class="search-container w-100">
       <div class="search-input-wrapper w-100">
@@ -74,7 +71,6 @@
     <span class="loading-text">Actualizando equipos...</span>
   </div>
   }
-  <!-- Grid de equipos moderno -->
   <div class="col-10 equipment-grid">
     <div
       *ngFor="let equipo of equipos | filtroPorMatricula:filtroMatricula"
@@ -83,7 +79,6 @@
       <ng-container
         *ngIf="equipo.modeloEquipo && equipo.modeloEquipo.marca && equipo.modeloEquipo.tipoEquipo"
       >
-        <!-- Header de la card -->
         <div class="card-header-modern">
           <div class="equipment-icon">
             <i class="bi bi-truck"></i>
@@ -97,9 +92,7 @@
           </div>
         </div>
 
-        <!-- Contenido de la card -->
         <div class="card-content-modern">
-          <!-- Info grid -->
           <div class="info-grid">
             <div class="info-item">
               <div class="info-label">Matrícula</div>
@@ -108,7 +101,7 @@
             <div class="info-item">
               <div class="info-label">Capacidad</div>
               <div class="info-value">
-                {{ equipo.modeloEquipo.capacidad }} M³ 
+                {{ equipo.modeloEquipo.capacidad }} M³
               </div>
             </div>
             <div class="info-item">
@@ -125,13 +118,11 @@
             </div>
           </div>
 
-          <!-- Ubicación con estilo moderno -->
           <div class="location-info">
             <i class="bi bi-geo-alt-fill location-icon"></i>
             <span>{{ equipo.latitud }}, {{ equipo.longitud }}</span>
           </div>
 
-          <!-- Status chips modernos -->
           <div class="row mb-2">
             <div class="col-12">
               <div
@@ -159,7 +150,6 @@
             </div>
           </div>
 
-          <!-- Botón de acción moderno -->
           <button
             class="btn w-100"
             [ngClass]="{
@@ -181,7 +171,6 @@
           </button>
         </div>
 
-        <!-- Card glow effect -->
         <div
           class="card-glow"
           [ngClass]="{'active-glow': equipo.estaEnUso}"
@@ -191,7 +180,6 @@
   </div>
 
   @if(equipos.length === 0 && !estaActualizando){
-  <!-- Sin equipos - Mejorado -->
   <div class="no-equipment">
     <div class="no-equipment-icon">
       <i class="bi bi-inbox"></i>
