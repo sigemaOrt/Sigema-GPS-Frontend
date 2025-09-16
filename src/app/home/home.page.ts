@@ -232,7 +232,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private agregarPosicion(equipoId: number) {
-    console.log('Ejecutando');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const lat = pos.coords.latitude;
@@ -248,7 +247,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           )
           .subscribe({
             next: () => {
-              console.log('cargo posicion');
             },
 
             error: () => {},
