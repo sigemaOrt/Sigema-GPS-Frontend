@@ -4,6 +4,7 @@ import { Observable, fromEvent, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Login } from '../models/Login';
 import { TrabajoService } from '../services/TrabajoService';
+import { Equipo } from '../models/equipo';
 
 interface LoginResponse {
   token: string;
@@ -21,7 +22,7 @@ export class AuthService implements OnDestroy {
     private http: HttpClient,
     private router: Router,
     private ngZone: NgZone
-  ) { 
+  ) {
     this.setupActivityEvents();
   }
 
@@ -33,48 +34,65 @@ export class AuthService implements OnDestroy {
     return localStorage.getItem('token');
   }
 
-logout(): void {
-  // Si hay un trabajo activo, finalizarlo primero
-  const trabajoService = (window as any)['trabajoService'] as TrabajoService | undefined;
-  if (trabajoService?.hayTrabajoActivo()) {
-    const equipoId = trabajoService.getEquipoEnTrabajo();
-    if (equipoId != null) {
-      // Obtenemos la ubicación actual antes de finalizar (opcional)
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          trabajoService.finalizarTrabajo(
-            equipoId,
-            pos.coords.latitude,
-            pos.coords.longitude,
-            [] // o pasar los emails si los tenés
-          ).subscribe({
-            next: () => console.log('Trabajo finalizado antes de logout'),
-            error: () => console.log('Error al finalizar trabajo antes de logout')
-          });
-        },
-        () => {
-          // Si no hay ubicación, igual intentamos finalizar sin coords
-          trabajoService.finalizarTrabajo(equipoId, 0, 0, []).subscribe();
-        }
-      );
+  logout(equipo?: Equipo): void {
+    // Si hay un trabajo activo, finalizarlo primero
+    const trabajoService = (window as any)['trabajoService'] as
+      | TrabajoService
+      | undefined;
+    if (trabajoService?.hayTrabajoActivo()) {
+      const equipoId = trabajoService.getEquipoEnTrabajo();
+      if (equipoId != null) {
+        // Obtenemos la ubicación actual antes de finalizar (opcional)
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            trabajoService
+              .finalizarTrabajo(
+                equipoId,
+                pos.coords.latitude,
+                pos.coords.longitude,
+                equipo?.modeloEquipo?.unidadMedida ?? '',
+                equipo?.unidad?.emails ?? []
+              )
+              .subscribe({
+                next: () => console.log('Trabajo finalizado antes de logout'),
+                error: () =>
+                  console.log('Error al finalizar trabajo antes de logout'),
+              });
+          },
+          () => {
+            trabajoService
+              .finalizarTrabajo(
+                equipoId,
+                0,
+                0,
+                equipo?.modeloEquipo?.unidadMedida ?? '',
+                equipo?.unidad?.emails ?? []
+              )
+              .subscribe();
+          }
+        );
+      }
     }
-  }
 
-  // Limpiamos token y timer
-  localStorage.removeItem('token');
-  localStorage.removeItem('rol');
-  if (this.inactivityTimeout) {
-    clearTimeout(this.inactivityTimeout);
-    this.inactivityTimeout = null;
-  }
-  this.teardownActivityMonitoring();
-  this.ngZone.run(() => this.router.navigate(['/login']));
-}
+    trabajoService?.setEquipoEnTrabajo(null);
 
+    // Limpiamos token y timer
+    localStorage.removeItem('token');
+    localStorage.removeItem('rol');
+    if (this.inactivityTimeout) {
+      clearTimeout(this.inactivityTimeout);
+      this.inactivityTimeout = null;
+    }
+    this.teardownActivityMonitoring();
+    this.ngZone.run(() => this.router.navigate(['/login']));
+  }
 
   private startInactivityTimer(): void {
     if (this.inactivityTimeout) clearTimeout(this.inactivityTimeout);
-    this.inactivityTimeout = setTimeout(() => this.logout(), this.INACTIVITY_TIME_MS);
+    this.inactivityTimeout = setTimeout(
+      () => this.logout(),
+      this.INACTIVITY_TIME_MS
+    );
   }
 
   private resetInactivityTimer(): void {
@@ -83,7 +101,7 @@ logout(): void {
 
   private setupActivityEvents(): void {
     const events = ['mousemove', 'click', 'keypress', 'scroll'];
-    events.forEach(ev => {
+    events.forEach((ev) => {
       fromEvent(document, ev).subscribe(() => this.resetInactivityTimer());
     });
   }

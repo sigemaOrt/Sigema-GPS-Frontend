@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   hayTrabajoActivo: boolean = false;
   equipoEnTrabajoId: number | null = null;
   estaActualizando: boolean = false;
+  private posicionIntervalId: any;
 
   private trabajoSubscription?: Subscription;
 
@@ -33,16 +34,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     private authService: AuthService
   ) {}
 
-ngOnInit() {
-  (window as any)['trabajoService'] = this.trabajoService;
-  this.cargarEquipos();
-  this.suscribirseAEstadoTrabajo();
-}
-
-
+  ngOnInit() {
+    (window as any)['trabajoService'] = this.trabajoService;
+    this.cargarEquipos();
+    this.suscribirseAEstadoTrabajo();
+  }
 
   ngOnDestroy() {
     this.trabajoSubscription?.unsubscribe();
+    this.trabajoSubscription?.unsubscribe();
+    if (this.posicionIntervalId) {
+      clearInterval(this.posicionIntervalId);
+    }
   }
 
   private suscribirseAEstadoTrabajo() {
@@ -54,50 +57,51 @@ ngOnInit() {
     );
   }
 
-cargarEquipos() {
-  this.estaActualizando = true;
-  this.equipoService
-    .obtenerEquipos()
-    .pipe()
-    .subscribe({
-      next: (equipos: Equipo[]) => {
-        if (equipos.length === 0) {
-          this.equipos = [];
-          this.estaActualizando=false;
-          return;
-        }
+  cargarEquipos() {
+    this.estaActualizando = true;
+    this.equipoService
+      .obtenerEquipos()
+      .pipe()
+      .subscribe({
+        next: (equipos: Equipo[]) => {
+          if (equipos.length === 0) {
+            this.equipos = [];
+            this.estaActualizando = false;
+            return;
+          }
 
-        
-        if (this.trabajoService.hayTrabajoActivo()) {
-          const equipoId = this.trabajoService.getEquipoEnTrabajo();
-          this.equipos = equipos.filter((e) => e.id === equipoId);
-          this.estaActualizando=false;
-          this.mostrarMensaje('Equipos actualizados (trabajo activo)', 'info');
-          return;
-        }
+          if (this.trabajoService.hayTrabajoActivo()) {
+            const equipoId = this.trabajoService.getEquipoEnTrabajo();
+            this.equipos = equipos.filter((e) => e.id === equipoId);
+            this.estaActualizando = false;
+            this.mostrarMensaje(
+              'Equipos actualizados (trabajo activo)',
+              'info'
+            );
+            return;
+          }
 
-       
-        const checks = equipos.map((equipo) =>
-          this.trabajoService.getEstaEnUso(equipo.id).pipe(
-            catchError(() => of(true)) 
-          )
-        );
+          const checks = equipos.map((equipo) =>
+            this.trabajoService
+              .getEstaEnUso(equipo.id)
+              .pipe(catchError(() => of(true)))
+          );
 
-        forkJoin(checks).subscribe((estados: boolean[]) => {
-          this.equipos = equipos.filter((_, i) => !estados[i]); 
-          this.mostrarMensaje('Equipos disponibles actualizados', 'success');
-        });
-        this.estaActualizando=false;
-      },
-      error: () => {
-        this.estaActualizando=false;
-        this.mostrarMensaje(
-          'Error al cargar los equipos. Intente de nuevo más tarde.',
-          'error'
-        );
-      },
-    });
-}
+          forkJoin(checks).subscribe((estados: boolean[]) => {
+            this.equipos = equipos.filter((_, i) => !estados[i]);
+            this.mostrarMensaje('Equipos disponibles actualizados', 'success');
+          });
+          this.estaActualizando = false;
+        },
+        error: () => {
+          this.estaActualizando = false;
+          this.mostrarMensaje(
+            'Error al cargar los equipos. Intente de nuevo más tarde.',
+            'error'
+          );
+        },
+      });
+  }
 
   actualizarEquipos() {
     this.estaActualizando = true;
@@ -108,12 +112,12 @@ cargarEquipos() {
         next: (data: Equipo[]) => {
           this.equipos = data;
           this.cargarEstadoUsoEquipos();
-        this.estaActualizando=false;
+          this.estaActualizando = false;
           this.mostrarMensaje('Equipos actualizados correctamente', 'success');
         },
         error: () => {
-        this.estaActualizando=false;
-        this.mostrarMensaje('Error al actualizar los equipos.', 'error');
+          this.estaActualizando = false;
+          this.mostrarMensaje('Error al actualizar los equipos.', 'error');
         },
       });
   }
@@ -188,53 +192,112 @@ cargarEquipos() {
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-        this.trabajoService.iniciarTrabajo(equipoId, lat, lon).subscribe({
-  next: () => {
-  const equipo = this.equipos.find((e) => e.id === equipoId);
-  if (equipo) {
-    equipo.estaEnUso = true;
-    this.equipos = [equipo]; 
-  }
-  this.equipoEnTrabajoId = this.trabajoService.getEquipoEnTrabajo();
-  this.hayTrabajoActivo = true;
-  this.mostrarMensaje('Trabajo iniciado exitosamente.', 'success');
-},
+        const equipo = this.equipos.find((e) => e.id === equipoId);
 
-          error: () =>
-            this.mostrarMensaje('Error al iniciar el trabajo.', 'error'),
-        });
+        this.trabajoService
+          .iniciarTrabajo(
+            equipoId,
+            lat,
+            lon,
+            equipo?.modeloEquipo?.unidadMedida ?? ''
+          )
+          .subscribe({
+            next: () => {
+              if (equipo) {
+                equipo.estaEnUso = true;
+                this.equipos = [equipo];
+              }
+              this.equipoEnTrabajoId = this.trabajoService.getEquipoEnTrabajo();
+              this.hayTrabajoActivo = true;
+
+              if (this.posicionIntervalId) {
+                clearInterval(this.posicionIntervalId);
+              }
+
+              if (!this.posicionIntervalId) {
+                this.posicionIntervalId = setInterval(
+                  () => this.agregarPosicion(equipoId),
+                  30 * 1000
+                );
+              }
+              this.mostrarMensaje('Trabajo iniciado exitosamente.', 'success');
+            },
+
+            error: () =>
+              this.mostrarMensaje('Error al iniciar el trabajo.', 'error'),
+          });
       },
       (err) => this.manejarErrorGeolocation(err, 'iniciar')
     );
   }
 
-private finalizarTrabajo(equipoId: number) {
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      const equipo = this.equipos.find((e) => e.id === equipoId);
-      
-      this.trabajoService
-        .finalizarTrabajo(equipoId, lat, lon, equipo?.unidad?.emails ?? [])
-        .subscribe({
-          next: () => {
-            if (equipo) equipo.estaEnUso = false;
+  private agregarPosicion(equipoId: number) {
+    console.log('Ejecutando');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const equipo = this.equipos.find((e) => e.id === equipoId);
 
-            this.mostrarMensaje('Trabajo finalizado exitosamente.', 'success');
-            this.cargarEquipos();
-          },
-          error: (error) =>
-            this.mostrarMensaje(
-              'Error al finalizar el trabajo. ' + error.error,
-              'error'
-            ),
-        });
-    },
-    (err) => this.manejarErrorGeolocation(err, 'finalizar')
-  );
-}
+        this.trabajoService
+          .agregarPosicion(
+            equipoId,
+            lat,
+            lon,
+            equipo?.modeloEquipo?.unidadMedida ?? ''
+          )
+          .subscribe({
+            next: () => {
+              console.log('cargo posicion');
+            },
 
+            error: () => {},
+          });
+      },
+      (err) => this.manejarErrorGeolocation(err, 'iniciar')
+    );
+  }
+
+  private finalizarTrabajo(equipoId: number) {
+    if (this.posicionIntervalId) {
+      clearInterval(this.posicionIntervalId);
+      this.posicionIntervalId = null;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const equipo = this.equipos.find((e) => e.id === equipoId);
+
+        this.trabajoService
+          .finalizarTrabajo(
+            equipoId,
+            lat,
+            lon,
+            equipo?.modeloEquipo?.unidadMedida ?? '',
+            equipo?.unidad?.emails ?? []
+          )
+          .subscribe({
+            next: () => {
+              if (equipo) equipo.estaEnUso = false;
+
+              this.mostrarMensaje(
+                'Trabajo finalizado exitosamente.',
+                'success'
+              );
+              this.cargarEquipos();
+            },
+            error: (error) =>
+              this.mostrarMensaje(
+                'Error al finalizar el trabajo. ' + error.error,
+                'error'
+              ),
+          });
+      },
+      (err) => this.manejarErrorGeolocation(err, 'finalizar')
+    );
+  }
 
   private manejarErrorGeolocation(
     error: GeolocationPositionError,
@@ -262,6 +325,10 @@ private finalizarTrabajo(equipoId: number) {
   }
 
   logout() {
-    this.authService.logout();
+    this.hayTrabajoActivo = false;
+    this.equipoEnTrabajoId = null;
+    const equipoId = this.trabajoService.getEquipoEnTrabajo();
+    const equipo = this.equipos.find((e) => e.id === equipoId);
+    this.authService.logout(equipo);
   }
 }

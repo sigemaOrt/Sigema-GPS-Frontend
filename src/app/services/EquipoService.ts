@@ -9,8 +9,7 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class EquipoService {
-  private apiUrl =
-    'https://sigemabe-d0gke3fdbnfza9et.canadacentral-01.azurewebsites.net/api/equipos';
+  private apiUrl ='https://sigemabe-d0gke3fdbnfza9et.canadacentral-01.azurewebsites.net/api/equipos';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

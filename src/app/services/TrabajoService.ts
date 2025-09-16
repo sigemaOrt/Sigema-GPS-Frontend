@@ -31,7 +31,21 @@ export class TrabajoService {
     return this.equipoEnTrabajoId;
   }
 
-  iniciarTrabajo(idEquipo: number, lat: number, lon: number): Observable<any> {
+  setEquipoEnTrabajo(id: number | null): void {
+    this.equipoEnTrabajoId = id;
+
+    if (id === null) {
+      this.trabajoActivoSubject.next(false);
+      this.trabajoActivo$ = of(false);
+    }
+  }
+
+  iniciarTrabajo(
+    idEquipo: number,
+    lat: number,
+    lon: number,
+    unidadMedida: string
+  ): Observable<any> {
     if (this.hayTrabajoActivo()) {
       return throwError(() => ({
         error:
@@ -40,7 +54,7 @@ export class TrabajoService {
       }));
     }
 
-    const body = { latitud: lat, longitud: lon };
+    const body = { latitud: lat, longitud: lon, unidadMedida: unidadMedida };
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
@@ -57,23 +71,46 @@ export class TrabajoService {
       );
   }
 
+  agregarPosicion(
+    idEquipo: number,
+    lat: number,
+    lon: number,
+    unidadMedida: string
+  ): Observable<any> {
+    const body = { latitud: lat, longitud: lon, unidadMedida: unidadMedida };
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`,
+    });
+    return this.http
+      .post<any>(`${this.appsigemagpsUrl}/agregarPosicion/${idEquipo}`, body, {
+        headers,
+      })
+      .pipe(map((res) => {}));
+  }
+
   finalizarTrabajo(
     idEquipo: number,
     lat: number,
     lon: number,
+    unidadMedida: string,
     em: { id: number; email: string }[]
   ): Observable<any> {
     const posicionClienteDTO = new PosicionClienteDTO();
     posicionClienteDTO.latitud = lat;
     posicionClienteDTO.longitud = lon;
-    posicionClienteDTO.emails = em ? em.map(e => e.email) : []
+    posicionClienteDTO.unidadMedida = unidadMedida;
+    posicionClienteDTO.emails = em ? em.map((e) => e.email) : [];
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`,
     });
     return this.http
-      .post<any>(`${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`, posicionClienteDTO, {
-        headers,
-      })
+      .post<any>(
+        `${this.appsigemagpsUrl}/finalizarTrabajo/${idEquipo}`,
+        posicionClienteDTO,
+        {
+          headers,
+        }
+      )
       .pipe(
         map((res) => {
           this.trabajoActivoSubject.next(false);
