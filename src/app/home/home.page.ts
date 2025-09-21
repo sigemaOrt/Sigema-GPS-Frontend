@@ -284,6 +284,8 @@ export class HomeComponent implements OnInit, OnDestroy {
                 'Trabajo finalizado exitosamente.',
                 'success'
               );
+              this.hayTrabajoActivo = false;
+              this.equipoEnTrabajoId = null;
               this.cargarEquipos();
             },
             error: (error) =>
